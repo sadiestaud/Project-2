@@ -1,7 +1,7 @@
 ## SI 206 W17 - Project 2 
 
 ## COMMENT HERE WITH:
-## Your name:
+## Your name: Sadie Staudacher 
 ## Anyone you worked with on this project:
 
 ## Below we have provided import statements, comments to separate out the parts of the project, instructions/hints/examples, and at the end, tests. See the PDF of instructions for more detail. 
@@ -12,6 +12,7 @@
 ## Import statements
 import unittest
 import json
+import re
 import requests
 import tweepy
 import twitter_info # Requires you to have a twitter_info file in this directory
@@ -32,8 +33,16 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## Part 0 -- CACHING SETUP
 
 ## Write the code to begin your caching pattern setup here.
+CACHE_FNAME = "206project2_caching.json"
 
+try:
+	cache_file = open(CACHE_FNAME, 'r')
+	cache_contents = cache_file.read()
+	CACHE_DICT = json.loads(cache_contents)
+	cache_file.close()
 
+except:
+	CACHE_DICT = {}
 
 
 ## PART 1 - Define a function find_urls.
@@ -45,8 +54,10 @@ api = tweepy.API(auth, parser=tweepy.parsers.JSONParser())
 ## find_urls("I love looking at websites like http://etsy.com and http://instagram.com and stuff") should return ["http://etsy.com","http://instagram.com"]
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
-
-
+def find_urls(string):
+	rege = r"https?:\/\/[A-Za-z0-9]{2,}(?:\.+[a-zA-Z0-9]{2,})+"
+	list_of_strings = re.findall(rege, string)
+	return list_of_strings
 
 
 
