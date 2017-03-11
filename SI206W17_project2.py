@@ -55,7 +55,7 @@ except:
 ## find_urls("the internet is awesome #worldwideweb") should return [], empty list
 
 def find_urls(string):
-	rege = r"https?:\/\/[A-Za-z0-9]{2,}(?:\.+[a-zA-Z0-9]{2,})+"
+	rege = r"https?:\/\/\w*(?:\.+\w{2,})+"
 	list_of_strings = re.findall(rege, string)
 	return list_of_strings
 
@@ -72,6 +72,27 @@ def find_urls(string):
 ## Start with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All  
 ## End with this page: https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page=11 
 
+def get_umsi_data():
+	data_list = []
+	base_url = "https://www.si.umich.edu/directory?field_person_firstname_value=&field_person_lastname_value=&rid=All&page="
+
+	if 'umsi_directory_data' in CACHE_DICT:
+		return CACHE_DICT['umsi_directory_data']
+
+	else:		
+		for page in range(0,12):
+			data_url = base_url + str(page)
+			data = requests.get(data_url, headers={'User-Agent':"SI_CLASS"})
+			data_list.append(data.text)
+
+		CACHE_DICT['umsi_directory_data'] = data_list
+
+		cache_file = open(CACHE_FNAME, 'w')
+		cache_file.write(json.dumps(CACHE_DICT))
+		cache_file.close()
+		
+	return CACHE_DICT['umsi_directory_data']
+
 
 
 
@@ -80,8 +101,6 @@ def find_urls(string):
 
 ## PART 2 (b) - Create a dictionary saved in a variable umsi_titles 
 ## whose keys are UMSI people's names, and whose associated values are those people's titles, e.g. "PhD student" or "Associate Professor of Information"...
-
-
 
 
 
